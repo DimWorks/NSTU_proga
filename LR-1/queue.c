@@ -1,4 +1,5 @@
 #include "queue.h"
+#include <stdio.h>
 
 #define SIZE 100
 

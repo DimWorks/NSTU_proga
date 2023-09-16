@@ -1,3 +1,4 @@
+#include "queue.h"
 #include <stdio.h>
 
 int main(int argc/*Количество аргументов*/, char* argv[]/*Массив аргументов*/)
@@ -6,6 +7,8 @@ int main(int argc/*Количество аргументов*/, char* argv[]/*М
 	{
 		printf("%s\n", argv[i]);
 	}
+
+	enqueue();
 
 	printf("\n\tTHE END\n");
 
