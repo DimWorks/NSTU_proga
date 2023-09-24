@@ -1,11 +1,11 @@
 #pragma once
 
-
+#include <stdbool.h>
 
 typedef struct trees
 {
 	int key;
-	int data;
+	void* data;
 	struct node* right;
 	struct node* left;
 	struct node* parent;
@@ -17,6 +17,7 @@ extern node* ROOT;
 node* search_the_node(node* tree, int key);
 void add_the_node(node* tree, int key, int data);
 void create_node(int key, int data);
-void showTree(node* tree, int p, int s);
+void printTree(node* tree);
 node* finde_parend(node* parent, int key);
-node* balance(node* p);
+void delete_node(int key);
+void balance();

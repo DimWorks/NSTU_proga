@@ -9,15 +9,21 @@ node* ROOT = NULL;
 
 node* search_the_node(node* tree, int key)
 {
-	if (tree == NULL) return NULL;
+	if (tree == NULL)
+	{
+		return NULL;
+	}
 	if (tree->key == key)
 	{
 		return tree;
 	}
+	else if(key < tree->key)
+	{
+		return search_the_node(tree->left, key);		
+	}
 	else
 	{
-		search_the_node(tree->left, key);
-		search_the_node(tree->right, key);
+		return search_the_node(tree->right, key);
 	}
 }
 
@@ -145,111 +151,164 @@ void showTree(node* tree, int p, int s)
 	}
 }
 
-unsigned char level(node* tree)
+void printTree(node* tree)
 {
-	return tree ? tree->level : 0; //≈сли узел существует, возвр€щаем его уровень, иначе 0
+	showTree(ROOT, 0, 0);
 }
 
-int balance_faxtor(node* tree)
+void delete_node(int key)
 {
-	return level(tree->right) - level(tree->left);
-}
-
-void fix_level(node* tree)
-{
-	unsigned char level_left = level(tree->left);
-	unsigned char level_right = level(tree->right);
-	tree->level = (level_left > level_right ? level_left : level_right) + 1;
-}
-
-node* rotate_to_right(node* tree)
-{
-	node* tmp = tree->left;
-	tree->left = tmp->right;
-	tmp->right = tree;
-	fix_level(tree);
-	fix_level(tmp);
-	return tree;
-}
-
-node* rotate_to_left(node* tree)
-{
-	node* tmp = tree->right;
-	tree->right = tmp->left;
-	tmp->right = tree;
-	fix_level(tmp);
-	fix_level(tree);
-	return tree;
-}
-
-node* balance(node* p) // балансировка узла p
-{
-	fix_level(p);
-	if (balance_faxtor(p) == 2)
+	node* root = ROOT;
+	root = search_the_node(root, key);
+	if (root == NULL)
 	{
-		if (balance_faxtor(p->right) < 0)
-			p->right = rotate_to_right(p->right);
-		return rotate_to_left(p);
+		return NULL;
+	}	
+
+	if (root->left == NULL || root->right == NULL)
+	{
+		if (root->left == NULL)
+		{
+			node* tmp = root->parent;
+			if (key < tmp->key)
+			{
+				tmp->left = root->right;				
+			}
+			else
+			{
+				tmp->right = root->right;
+			}
+			tmp = root;
+			root = root->right;
+			if (tmp->right != NULL)
+			{
+				node* that_node = tmp->right;
+				that_node->parent = tmp->parent;
+			}
+			if (tmp->left != NULL)
+			{
+				node* that_node = tmp->left;
+				that_node->parent = tmp->parent;
+			}
+			free(tmp);
+		}
+		else
+		{
+			node* tmp = root->parent;
+			if (key < tmp->key)
+			{
+				tmp->left = root->left;
+			}
+			else
+			{
+				tmp->right = root->left;
+			}
+			tmp = root;
+			root = root->left;
+			if (tmp->right != NULL)
+			{
+				node* that_node = tmp->right;
+				that_node->parent = tmp->parent;
+			}
+			if (tmp->left != NULL)
+			{
+				node* that_node = tmp->left;
+				that_node->parent = tmp->parent;
+			}
+			free(tmp);
+		}
 	}
-	if (balance_faxtor(p) == -2)
+	else if (root->left == NULL && root->right == NULL)
 	{
-		if (balance_faxtor(p->left) > 0)
-			p->left = rotate_to_left(p->left);
-		return rotate_to_right(p);
-	}
-	return p; // балансировка не нужна
-}
-
-void search(int key)
-{
-	node* tree = finde_parend(ROOT, key);
-	if (key < tree->key)
-	{
-		return tree->left;
+		node* tmp = root->parent;
+		if (key < tmp->key)
+		{
+			tmp->left = NULL;
+			free(root);
+		}
 	}
 	else
 	{
-		return tree->right;
+		node* maxLeft = get_max(root->left);
+		root->data = maxLeft->data;
+		root->key = maxLeft->key;
+		root->left = maxLeft->left;
+		root->right = maxLeft->right;
+		root->level = maxLeft->level;
+		root->parent = maxLeft->parent;
 	}
 }
 
-void delete(node* root, int key)
+// √лубина узла
+int max_level_node(node* tree, int level)
 {
-	// ѕоиск удал€емого узла по ключу
-	node* tree = root, * l = NULL, * m = NULL;
-	l = search(key);
-	// 1 случай
-	if ((l->left == NULL) && (l->right == NULL))
+	if (tree)
 	{
-		m = l->parent;
-		if (l == m->right) m->right = NULL;
-		else m->left = NULL;
-		free(l);
+		int new_level_1 = max_level_node(tree->left, level + 1);
+		int new_level_2 = max_level_node(tree->right, level + 1);
+		if (new_level_1 > level) level = new_level_1;
+		if (new_level_2 > level) level = new_level_2;
 	}
-	// 2 случай, 1 вариант - поддерево справа
-	if ((l->left == NULL) && (l->right != NULL))
+	return level;
+}
+
+// ћаксимальна€ глубина дерева
+int max_level(node* tree)
+{
+	return max_level_node(tree, -1);
+}
+
+void balance_tree(node** tree)
+{
+	if (*tree)
 	{
-		m = l->parent;
-		if (l == m->right) m->right = l->right;
-		else m->left = l->right;
-		free(l);
+		while (max_level((*tree)->left) - max_level((*tree)->right) >= 2)
+		{
+			node* tmp = (*tree)->left;
+			(*tree)->left = tmp->right;
+			tmp->right = *tree;
+			*tree = tmp;
+		}
+
+		while (max_level((*tree)->right) - max_level((*tree)->left) >= 2)
+		{
+			node* tmp = (*tree)->right;
+			(*tree)->right = tmp->left;
+			tmp->left = *tree;
+			*tree = tmp;
+		}
+		balance_tree(&((*tree)->left));
+		balance_tree(&((*tree)->right));
 	}
-	// 2 случай, 2 вариант - поддерево слева
-	if ((l->left != NULL) && (l->right == NULL))
+}
+
+void balance()
+{
+	if (ROOT == NULL)
 	{
-		m = l->parent;
-		if (l == m->right) m->right = l->left;
-		else m->left = l->left;
-		free(l);
+		return NULL;
 	}
-	// 3 случай
-	if ((l->left != NULL) && (l->right != NULL))
+	balance_tree(&ROOT);
+	balance_tree(&ROOT);
+}
+
+bool isFullBinaryTree(node* root)
+{
+	if (root == NULL)
 	{
-		m = succ(l);
-		l->key = m->key;
-		if (m->right == NULL)
-			m->parent->left = NULL;
-		else m->parent->left = m->right;
-		free(m);
-	}
+		return true;
+	}		
+
+	// Checking the presence of children
+	if (root->left == NULL && root->right == NULL)
+	{
+		return true;
+	}		
+
+	if ((root->left) && (root->right))
+	{
+		return (isFullBinaryTree(root->left) && isFullBinaryTree(root->right));
+	}	
+
+	return false;
 }
