@@ -1,14 +1,9 @@
 #include "singly_list.h"
+#include "../test.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-int main()
-{
-    example();
-    return 0;
-}
-
-void example() 
+void testint_list() 
 {
     node* list = NULL;  //создание указателя на 1 элемент списка (пустой, т.к. пока в списке нет ни одного элемента)
 
@@ -32,10 +27,7 @@ void example()
     printf("Remove element from TAIL: %d\n", pop_from_tail(list)); //удаление одного элемента в списоке с хвоста (функция возвращает данные удаляемого элемента)
     printf("Remove element from position: %d\n", pop_from_position(&list, 2)); //удаление одного элемента в список с выбранной позиции(функция возвращает данные удаляемого элемента)    
     print_from_head(list);  //вывод на экран всех элементов списка с головы
-    
-    printf("Edit element was: %d\n", edit_from_head(list, 128));    //редактирования одного элемента из списка с головы, (функция возвращает старые данные редактируемого элемента)
-    printf("Edit element was: %d\n", edit_from_tail(list, 1));  //редактирования одного элемента из списка с хвоста, (функция возвращает старые данные редактируемого элемента)
-    printf("Edit element was: %d\n", edit_from_position(list, 2, 64));   //редактирования одного элемента из списка с выбранной позиции, (функция возвращает старые данные редактируемого элемента)
+        
     print_from_head(list);  //вывод на экран всех элементов списка с головы
 
     printf("There are %d elements in the list\n", count(list)); //функция возвращает количество элементов в списке

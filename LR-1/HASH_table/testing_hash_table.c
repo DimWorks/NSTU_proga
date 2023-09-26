@@ -1,9 +1,10 @@
 #include "hash_table.h"
+#include "../test.h"
 #include <stdio.h>
 
 #define CAPACITY 10 // Size of the Hash Table
 
-int main() 
+void testing_hash_table() 
 {
     HT* table = create_table(CAPACITY);
     
@@ -25,6 +26,4 @@ int main()
     print_table(table);
 
     free_table(table);
-
-    return 0;
 }

@@ -1,5 +1,6 @@
 #include "stack.h"
 #include "../Lists/singly_list.h"
+#include "../test.h"
 #include <stdio.h>
 
 void testing_stack()

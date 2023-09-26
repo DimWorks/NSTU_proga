@@ -1,12 +1,14 @@
+#include "trees.h"
+#include "../test.h"
 #include <stdio.h>
 #include <locale.h>
-#include "trees.h"
+
 
 #define RUS setlocale(LC_ALL, "RU");
 
 node* ROOT;
 
-int main()
+void testing_tree()
 {
 	RUS
 	if (search_the_node(ROOT, 5) == NULL)
@@ -17,13 +19,6 @@ int main()
 	{
 		printf("\nНашёл!");
 	}
-
-	/*for (int i = 0; i < 10; i++)
-	{
-		create_node((i % 2) == 0 ? i : i * (-1), i);
-		printf("%d   %d    done\n", (i%2) == 0 ? i : i * (-1), i);
-
-	}*/
 
 	create_node(3, 3);
 	create_node(15, 15);
@@ -37,14 +32,7 @@ int main()
 	create_node(14, 14);
 	create_node(13, 13);
 	create_node(4, 4);
-
-
-	/*for (int i = 0; i < 10; i++)
-	{
-		create_node(i, i);
-		printf("%d   %d    done\n", i, i);
-
-	}	*/
+	
 
 	if (search_the_node(ROOT, 5) == NULL)
 	{
