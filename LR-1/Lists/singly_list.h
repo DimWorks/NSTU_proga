@@ -18,3 +18,7 @@ void* pop_from_tail(node*);
 
 void print_from_head(node*); 
 void print_from_tail(node*); 
+
+int edit_from_head(node*, void*); 
+int edit_from_tail(node*, void*);
+int edit_from_position(node*, int, void*);
