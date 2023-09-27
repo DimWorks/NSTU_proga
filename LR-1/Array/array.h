@@ -14,3 +14,5 @@ typedef struct ARR
 ARR** create_array(int);
 void array_push(ARR*, int, int);
 void print_array_string(ARR*);
+void print_element(ARR*, int);
+void array_pop(ARR**, int);
