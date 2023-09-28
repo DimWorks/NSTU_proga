@@ -1,5 +1,4 @@
 #include "hash_table.h"
-#include "../test.h"
 #include <stdio.h>
 
 #define CAPACITY 10 // Size of the Hash Table

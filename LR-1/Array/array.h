@@ -12,7 +12,7 @@ typedef struct ARR
 }ARR;
 
 ARR** create_array(int);
-void array_push(ARR*, int, int);
+void array_push(ARR**, int, void*);
 void print_array_string(ARR*);
 void print_element(ARR*, int);
 void array_pop(ARR**, int);

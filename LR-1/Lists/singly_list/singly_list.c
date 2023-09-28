@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+node* HEAD;
+node* TAIL;
+
 //-------------------- CHECK FUNCTION --------------------
 int is_empty(node* list_copy)
 {
@@ -82,6 +85,39 @@ void* pop_from_tail(node* list_copy)
     return res;
 }
 
+int pop_from_position(node** list, int position)
+{
+    if (*list == NULL)
+    {
+        printf("Element to remove doesn't exist. List is empty.\n");
+        return NULL;
+    }
+
+    if (position < 1 || position > count(*list))
+    {
+        printf("Impossible position for the element\n");
+        return NULL;
+    }
+    if (position == 1)
+    {
+        return pop_from_head(list);
+    }
+    if (position == count(*list))
+    {
+        return pop_from_tail(*list);
+    }
+    node* list_copy = *list;
+    node* tmp = list_copy;
+    for (int i = 1; i < position; i++, list_copy = (list_copy)->next)
+    {
+        tmp = list_copy;
+    }
+    int res = list_copy->data;
+    tmp->next = list_copy->next;
+    free(list_copy);
+    return res;
+}
+
 //-------------------- PRINT FUNCTION --------------------
 void print_from_head(node* list_copy)
 {
@@ -93,7 +129,7 @@ void print_from_head(node* list_copy)
     printf("Print from HEAD: ");
     while (list_copy != NULL)
     {
-        printf("%d ", list_copy->data);
+        printf("%s ", list_copy->data);
         list_copy = list_copy->next;   
     }
     printf("\n");
@@ -104,7 +140,7 @@ void real_print_from_tail(node* list_copy)
     if (list_copy != NULL)
     {
         real_print_from_tail(list_copy->next); 
-        printf("%d ", list_copy->data); 
+        printf("%s ", list_copy->data); 
     }
 }
 
@@ -126,7 +162,7 @@ void edit_from_head(node* list_copy, void* data)
     if (list_copy == NULL) 
     { 
         printf("Element to edit doesn't exist. List is empty.\n"); 
-        return NULL; 
+        return; 
     }
 
     list_copy->data = data; 
@@ -137,7 +173,7 @@ void edit_from_tail(node* list_copy, void* data)
     if (list_copy == NULL) 
     { 
         printf("Element to edit doesn't exist. List is empty.\n"); 
-        return NULL; 
+        return; 
     }
 
     while (list_copy->next != NULL) 
@@ -153,13 +189,13 @@ void edit_from_position(node* list_copy, int position, void* data)
     if (list_copy == NULL) 
     { 
         printf("Element to edit doesn't exist. List is empty.\n"); 
-        return NULL; 
+        return; 
     }
 
     if (position < 1 || position > count(list_copy)) 
     { 
         printf("Impossible position for the element.\n"); 
-        return NULL; 
+        return; 
     }
 
     for (int i = 1; i < position; i++, list_copy = (list_copy)->next);  //переход к запрашиваемому элементу

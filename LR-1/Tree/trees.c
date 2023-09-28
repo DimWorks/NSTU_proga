@@ -5,7 +5,7 @@
 
 #define RUS setlocale(LC_ALL, "RU");
 
-node* ROOT = NULL;
+node* ROOT;
 
 node* search_the_node(node* tree, int key)
 {
@@ -33,7 +33,7 @@ node* finde_parend(node* parent, int key)
 	{
 		if (parent->left != NULL)
 		{
-			finde_parend(parent->left, key);
+			return finde_parend(parent->left, key);
 		}
 		else
 		{
@@ -44,7 +44,7 @@ node* finde_parend(node* parent, int key)
 	{
 		if (parent->right != NULL)
 		{
-			finde_parend(parent->right, key);
+			return finde_parend(parent->right, key);
 		}
 		else
 		{
@@ -53,7 +53,7 @@ node* finde_parend(node* parent, int key)
 	}
 }
 
-void create_node(int key, int data)
+void create_node(int key, void* data)
 {
 	node* tree = NULL;
 		if ((tree = (node*)malloc(sizeof(node))))
@@ -95,7 +95,7 @@ node* get_max(node* tree)
 	if (tree == NULL)
 	{
 		printf("Дерева не существует!\n");
-		return;
+		return NULL;
 	}
 	if (tree->right == NULL)
 	{
@@ -111,7 +111,7 @@ node* get_min(node* tree)
 	if (tree == NULL)
 	{
 		printf("Дерева не существует!\n");
-		return;
+		return NULL;
 	}
 	if (tree->left == NULL)
 	{
@@ -153,7 +153,7 @@ void showTree(node* tree, int p, int s)
 
 void printTree(node* tree)
 {
-	showTree(ROOT, 0, 0);
+	showTree(tree, 0, 0);
 }
 
 void delete_node(int key)
@@ -162,7 +162,7 @@ void delete_node(int key)
 	root = search_the_node(root, key);
 	if (root == NULL)
 	{
-		return NULL;
+		return;
 	}	
 
 	if (root->left == NULL || root->right == NULL)
@@ -229,13 +229,27 @@ void delete_node(int key)
 	}
 	else
 	{
-		node* maxLeft = get_max(root->left);
-		root->data = maxLeft->data;
-		root->key = maxLeft->key;
-		root->left = maxLeft->left;
-		root->right = maxLeft->right;
-		root->level = maxLeft->level;
-		root->parent = maxLeft->parent;
+		node* receiver = root->right;
+		if (receiver->left == NULL)
+		{
+			root->data = receiver->data;
+			root->key = receiver->key;
+			root->right = receiver->right;
+			root->level = receiver->level;
+			root->parent = receiver->parent;
+			return;
+		}
+		else
+		{
+			receiver = receiver->left;
+			root->data = receiver->data;
+			root->key = receiver->key;
+			root->right = receiver->parent;
+			root->level = receiver->level - 1;
+			receiver = receiver->parent;
+			receiver->left = NULL;
+			return;
+		}
 	}
 }
 
@@ -286,7 +300,7 @@ void balance()
 {
 	if (ROOT == NULL)
 	{
-		return NULL;
+		return;
 	}
 	balance_tree(&ROOT);
 	balance_tree(&ROOT);

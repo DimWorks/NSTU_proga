@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-typedef struct trees
+typedef struct node
 {
 	int key;
 	void* data;
@@ -16,7 +16,7 @@ extern node* ROOT;
 
 node* search_the_node(node* tree, int key);
 void add_the_node(node* tree, int key, int data);
-void create_node(int key, int data);
+void create_node(int key, void* data);
 void printTree(node* tree);
 node* finde_parend(node* parent, int key);
 void delete_node(int key);

@@ -1,21 +1,32 @@
 #include "stack.h"
-#include "../Lists/singly_list.h"
 #include "../test.h"
 #include <stdio.h>
 
 int main()
 {
 	printf("\n\tTESTING STACK\n");
-	char* data = "Testing";
-
+	char* data = "Test 1";
+	printf("push to stack: %s\n", data);
 	push_stack(data);
-	push_stack("Test 2");
-	push_stack("Test 3");
-	push_stack("Test 4");
+	data = "Test 2";
+	printf("push to stack: %s\n", data);
+	push_stack(data);
+	data = "Test 3";
+	printf("push to stack: %s\n", data);
+	push_stack(data);
+	data = "Test 4";
+	printf("push to stack: %s\n", data);
+	push_stack(data);
 
+	printf("Read from stack: ");
 	pop_stack();
+	printf("Read from stack: ");
 	pop_stack();
+	printf("Read from stack: ");
 	pop_stack();
+	printf("Read from stack: ");
+	pop_stack();
+	printf("Read from stack: ");
 	pop_stack();
 
 	return 0;
