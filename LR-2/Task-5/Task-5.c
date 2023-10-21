@@ -7,17 +7,11 @@
 
 #define M 4
 
-char* init_position(int x, int y)
+int init_position(int x, int y)
 {
-	char position[4];
-	position[0] = x + '0';// 48;
-	position[1] = ' ';
-	position[2] = y + 48;
-	position[3] = '\0';
+	x *= 10;
 
-	
-
-	return position;
+	return x + y;
 }
 
 void FUCK(int x, int y)
@@ -25,16 +19,9 @@ void FUCK(int x, int y)
 	
 }
 
-void get_position(char* position)
-{
-	printf("%d ", position[0]-48);
-	printf("%d\n", position[2]-48);
-	////printf("\n");
-}
-
 bool OnBoard(int k, int s)
 {
-	if (k > 2 && k < M + 1 && s > 0 && s < M + 1)
+	if (k >= 1 && k <= M && s >= 1 && s <= M)
 	{
 		return true;
 	}
@@ -48,11 +35,10 @@ void letEatBee(int x, int y, int X, int Y)
 {
 	int dx[8] = { -2, -1, 1, 2, -2, -1, 1, 2 };
 	int dy[8] = { -1, -2, -2, -1, 1, 2, 2, 1 };	
-	char tmp[4];
 
-	strncpy(tmp, init_position(x, y), 4);
-	push_queue(tmp);
-	printf("\t%s\n", tmp);
+	push_queue(init_position(x, y));
+	
+	printf("\t%d\n", init_position(x, y));
 
 	bool visited[M + 1][M + 1] = { false };
 	visited[x][y] = true;
@@ -64,13 +50,13 @@ void letEatBee(int x, int y, int X, int Y)
 
 	while (!is_empty())
 	{
-		char* z = pop_queue();
-		int x_z = z[0] - 48;
-		int y_z = z[2] - 48;
+		int z = pop_queue();
+		int x_z = z / 10;
+		int y_z = z % 10;
 
 		if (x_z == X && y_z == Y)
 		{
-			printf("YES!\t%d\n", kMove[x_z][y_z]);
+			printf("Minimum number of moves:  %d\n", kMove[x_z][y_z]);
 			return;
 		}
 
@@ -84,9 +70,9 @@ void letEatBee(int x, int y, int X, int Y)
 				visited[x_new][y_new] = true;
 				kMove[x_new][y_new] = kMove[x_z][y_z] + 1;
 
-				strncpy(tmp, init_position(x_new, y_new), 4);
-				push_queue(tmp);
-				printf("\t%s\n", tmp);
+				push_queue(init_position(x_new, y_new));
+
+				printf("\t%d\n", init_position(x_new, y_new));
 			}
 		}
 	}
@@ -97,6 +83,6 @@ void letEatBee(int x, int y, int X, int Y)
 int main()
 {
 	int x = 1, y = 4;
-	letEatBee(x, y, 1, 3);
+	letEatBee(x, y, 3, 1);
 }
 

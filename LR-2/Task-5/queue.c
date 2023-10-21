@@ -18,25 +18,25 @@ int count(node* list_copy)
     for (; list_copy != NULL; list_copy = list_copy->next)
     {
         x++;
-    }  
+    }
     return x;
 }
 
 //-------------------- PUSH FUNCTION --------------------
-void push_to_head(node** list, char* data)
+void push_to_head(node** list, int data)
 {
     node* tmp = (node*)malloc(sizeof(node));
-    tmp->data = data; 
+    tmp->data = data;
     tmp->next = *list;
     *list = tmp;
     HEAD = tmp;
 }
 
-void push_to_tail(node* list_copy, char* data)
+void push_to_tail(node* list_copy, int data)
 {
     if (HEAD == NULL)
     {
-        push_to_head(&list_copy, data);
+        push_to_head(&HEAD, data);
         TAIL = HEAD;
         return;
     }
@@ -53,15 +53,15 @@ void push_to_tail(node* list_copy, char* data)
 }
 
 //-------------------- POP FUNCTION --------------------
-char* pop_from_head(node** list)
+int pop_from_head(node** list)
 {
     if (*list == NULL)
-    { 
-        printf("Element doesn't exist. List is empty.\n"); 
-        return NULL; 
+    {
+        printf("Element doesn't exist. List is empty.\n");
+        return NULL;
     }
     node* tmp = *list;
-    char* res = tmp->data;
+    int res = tmp->data;
     HEAD = tmp->next;
     *list = tmp->next;
     free(tmp);
@@ -69,12 +69,12 @@ char* pop_from_head(node** list)
 }
 
 
-void push_queue(char* data)
+void push_queue(int data)
 {
-	push_to_tail(TAIL, data);
+    push_to_tail(TAIL, data);
 }
 
-char* pop_queue()
+int pop_queue()
 {
     return pop_from_head(&HEAD);
 }

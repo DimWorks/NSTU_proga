@@ -4,10 +4,10 @@
 
 typedef struct node 
 { 
-    char* data;
+    int data;
     struct node* next; 
 } node;
 
 void push_queue(char*);
-char* pop_queue();
+int pop_queue();
 bool is_empty();
