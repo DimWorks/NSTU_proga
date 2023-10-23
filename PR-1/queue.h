@@ -1,10 +1,13 @@
 #pragma once
 
-typedef struct node 
-{ 
-    void* data;  
-    struct node* next; 
-} node;
+#include <stdbool.h>
 
-void push_queue(void*);
-void pop_queue();
+typedef struct q_node
+{
+    char* data;
+    struct q_node* next;
+} q_node;
+
+void push_queue(char*);
+char* pop_queue();
+bool is_empty();

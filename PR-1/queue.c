@@ -1,78 +1,76 @@
 #include "queue.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-node* HEAD = NULL;
-node* TAIL = NULL;
+q_node* START = NULL;
+q_node* END = NULL;
 
 //-------------------- CHECK FUNCTION --------------------
-int is_empty(node* list_copy)
+bool is_empty()
 {
-    return list_copy == NULL;   
+    return START == NULL;
 }
 
-int count(node* list_copy)
+int count(q_node* list_copy)
 {
     int x = 0;
     //обход всего списока
     for (; list_copy != NULL; list_copy = list_copy->next)
     {
         x++;
-    }  
+    }
     return x;
 }
 
 //-------------------- PUSH FUNCTION --------------------
-void push_to_head(node** list, void* data)
+void push_to_start(q_node** list, char* data)
 {
-    node* tmp = (node*)malloc(sizeof(node));
-    tmp->data = data; 
+    q_node* tmp = (q_node*)malloc(sizeof(q_node));
+    //tmp->data = data;
+    tmp->data = _strdup(data);
     tmp->next = *list;
     *list = tmp;
-    HEAD = tmp;
 }
 
-void push_to_tail(node* list_copy, void* data)
+void push_to_end(q_node* list_copy, char* data)
 {
-    if (list_copy == NULL)
+    if (START == NULL)
     {
-        push_to_head(&list_copy, data);
-        TAIL = HEAD;
+        push_to_start(&START, data);
+        END = START;
         return;
     }
-    node* tmp = (node*)malloc(sizeof(node));
-    tmp->data = data;
+    q_node* tmp = (q_node*)malloc(sizeof(q_node));
+    tmp->data = _strdup(data);
     tmp->next = NULL;
-    while ((list_copy->next) != NULL)
-    {
-        list_copy = list_copy->next;
-    }
     list_copy->next = tmp;
-    TAIL = list_copy;
+    END = tmp;
 }
 
 //-------------------- POP FUNCTION --------------------
-void* pop_from_head(node** list)
+char* pop_from_start(q_node** list)
 {
     if (*list == NULL)
-    { 
-        printf("Element doesn't exist. List is empty.\n"); 
-        return NULL; 
+    {
+        printf("Element doesn't exist. List is empty.\n");
+        return NULL;
     }
-    node* tmp = *list;
-    void* res = tmp->data;
+    q_node* tmp = *list;
+    char* res = tmp->data;
+    START = tmp->next;
     *list = tmp->next;
     free(tmp);
     return res;
 }
 
 
-void push_queue(void* data)
+void push_queue(char* data)
 {
-	push_to_tail(TAIL, data);
+    push_to_end(END, data);
 }
 
-void pop_queue()
+char* pop_queue()
 {
-	printf("%s\n", pop_from_head(&HEAD));
+    return pop_from_start(&START);
 }

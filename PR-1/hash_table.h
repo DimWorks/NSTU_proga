@@ -1,9 +1,9 @@
 #pragma once
 
-typedef struct node {
+typedef struct ht_node {
     char* key;
     void* value;
-} node;
+} ht_node;
 
 typedef struct HT {
     struct HT** items;
@@ -13,7 +13,7 @@ typedef struct HT {
 }HT;
 
 typedef struct List {
-    node* node;
+    ht_node* ht_node;
     struct List* next;
     
 } List;

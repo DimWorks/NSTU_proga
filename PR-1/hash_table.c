@@ -12,22 +12,22 @@ List* TAIL;
 
 //-----------------HASH FUNCK-------------------------------
 
-unsigned long hash_function(char* str) 
+unsigned long hash_function(char* str)
 {
     unsigned long i = 0;
     for (int j = 0; str[j]; j++)
     {
         i += str[j];
     }
-        
+
     return i % CAPACITY;
 }
 
 //-----------------CREATE HASH TABLE--------------------
 
-node* create_item(char* key, char* value)
+ht_node* create_item(char* key, char* value)
 {
-    node* item = (node*)malloc(sizeof(node));
+    ht_node* item = (ht_node*)malloc(sizeof(ht_node));
     item->key = (char*)malloc(strlen(key) + 1);
     item->value = (char*)malloc(strlen(value) + 1);
 
@@ -37,7 +37,7 @@ node* create_item(char* key, char* value)
     return item;
 }
 
-List** create_overflow(HT* table) 
+List** create_overflow(HT* table)
 {
     List** my_list = (List**)calloc(table->size, sizeof(List*));
     for (int i = 0; i < table->size; i++)
@@ -47,12 +47,12 @@ List** create_overflow(HT* table)
     return my_list;
 }
 
-HT* create_table(int size) 
+HT* create_table(int size)
 {
     HT* table = (HT*)malloc(sizeof(HT));
     table->size = size;
     table->count = 0;
-    table->items = (node**)calloc(table->size, sizeof(node*));
+    table->items = (ht_node**)calloc(table->size, sizeof(ht_node*));
     for (int i = 0; i < table->size; i++)
     {
         table->items[i] = NULL;
@@ -64,13 +64,13 @@ HT* create_table(int size)
 void free_list(List* list)
 {
     List* temp = list;
-    while (list != NULL) 
+    while (list != NULL)
     {
-         temp = list;
+        temp = list;
         list = list->next;
-        free(temp->node->key);
-        free(temp->node->value);
-        free(temp->node);
+        free(temp->ht_node->key);
+        free(temp->ht_node->value);
+        free(temp->ht_node);
         free(temp);
     }
 }
@@ -81,11 +81,11 @@ void free_overflow(HT* table)
     for (int i = 0; i < table->size; i++)
     {
         free_list(my_list[i]);
-    }        
+    }
     free(my_list);
 }
 
-void free_item(node* item)
+void free_item(ht_node* item)
 {
     // Frees an item
     free(item->key);
@@ -98,7 +98,7 @@ void free_table(HT* table)
     // Frees the table
     for (int i = 0; i < table->size; i++)
     {
-        node* item = table->items[i];
+        ht_node* item = table->items[i];
         if (item != NULL)
         {
             free_item(item);
@@ -110,19 +110,19 @@ void free_table(HT* table)
     free(table);
 }
 
-List* list_insert(List* list, node* item)
+List* list_insert(List* list, ht_node* item)
 {
     if (list == NULL)
     {
         list = (List*)malloc(sizeof(List));
-        list->node = item;
+        list->ht_node = item;
         list->next = NULL;
         return list;
     }
-    else if(list->next == NULL)
+    else if (list->next == NULL)
     {
         List* tmp = (List*)malloc(sizeof(List));
-        tmp->node = item;
+        tmp->ht_node = item;
         tmp->next = NULL;
         list->next = tmp;
         return list;
@@ -134,22 +134,22 @@ List* list_insert(List* list, node* item)
             list = list->next;
         }
         List* tmp = (List*)malloc(sizeof(List));
-        tmp->node = item;
+        tmp->ht_node = item;
         tmp->next = NULL;
         list->next = tmp;
         return list;
     }
 }
 
-void handle_collision(HT* table, unsigned long index, node* item) 
+void handle_collision(HT* table, unsigned long index, ht_node* item)
 {
     List* list = table->overflow[index];
 
-    if (list == NULL) 
+    if (list == NULL)
     {
         // We need to create the list
         list = (List*)malloc(sizeof(List));
-        list->node = item;
+        list->ht_node = item;
         list->next = NULL;
         table->overflow[index] = list;
 
@@ -164,23 +164,23 @@ void handle_collision(HT* table, unsigned long index, node* item)
 
 //----------------------PUSH TO HASH TABLE-------------------
 
-void ht_insert(HT* table, char* key, char* value) 
+void ht_insert(HT* table, char* key, char* value)
 {
     if (table == NULL)
     {
         return;
     }
     // Create the item
-    node* item = create_item(key, value);
+    ht_node* item = create_item(key, value);
 
     int index = hash_function(key);
 
-    node* current_item = table->items[index];
+    ht_node* current_item = table->items[index];
 
-    if (current_item == NULL) 
+    if (current_item == NULL)
     {
         // Key does not exist.
-        if (table->count == table->size) 
+        if (table->count == table->size)
         {
             printf("Insert Error: Hash Table is full\n");
             return;
@@ -191,7 +191,7 @@ void ht_insert(HT* table, char* key, char* value)
         table->items[index] = item;
         table->count++;
     }
-    else 
+    else
     {
         // Scenario 1: We only need to update value
         if (strcmp(current_item->key, key) == 0)
@@ -200,7 +200,7 @@ void ht_insert(HT* table, char* key, char* value)
             //strcpy(table->items[index], current_item->value);
             return;
         }
-        else 
+        else
         {
             // Scenario 2: Collision
             // We will handle case this a bit later
@@ -210,32 +210,32 @@ void ht_insert(HT* table, char* key, char* value)
     }
 }
 
-char* ht_search(HT* table, char* key) 
-{    
+char* ht_search(HT* table, char* key)
+{
     int index = hash_function(key);
-    node* item = table->items[index];
+    ht_node* item = table->items[index];
     List* list = table->overflow[index];
 
     // Ensure that we move to a non NULL item
-    while (item != NULL) 
+    while (item != NULL)
     {
         if (strcmp(item->key, key) == 0)
         {
             return item->value;
         }
-            
+
         if (list == NULL)
         {
             return NULL;
         }
-            
-        item = list->node;
+
+        item = list->ht_node;
         list = list->next;
     }
     return NULL;
 }
 
-void print_search(HT* table, char* key) 
+void print_search(HT* table, char* key)
 {
     char* val;
     if ((val = ht_search(table, key)) == NULL)
@@ -243,31 +243,31 @@ void print_search(HT* table, char* key)
         printf("Key:%s does not exist\n", key);
         return;
     }
-    else 
+    else
     {
         printf("Key:%s, Value:%s\n", key, val);
     }
 }
 
-void print_table(HT* table) 
+void print_table(HT* table)
 {
     printf("\nHash Table\n-------------------\n");
-    for (int i = 0; i < table->size; i++) 
+    for (int i = 0; i < table->size; i++)
     {
-        if (table->items[i]) 
+        if (table->items[i])
         {
-            node* tmp = table->items[i];
+            ht_node* tmp = table->items[i];
             printf("Index:%d, Key:%s, Value:%s\n", i, tmp->key, tmp->value);
         }
     }
     printf("-------------------\n\n");
 }
 
-void ht_delete(HT* table, char* key) 
+void ht_delete(HT* table, char* key)
 {
     // Deletes an item from the table
     int index = hash_function(key);
-    node* item = table->items[index];
+    ht_node* item = table->items[index];
     List* head = table->overflow[index];
 
     if (item == NULL)
@@ -275,9 +275,9 @@ void ht_delete(HT* table, char* key)
         // Does not exist. Return
         return;
     }
-    else 
+    else
     {
-        if (head == NULL && strcmp(item->key, key) == 0) 
+        if (head == NULL && strcmp(item->key, key) == 0)
         {
             // No collision chain. Remove the item
             // and set table index to NULL
@@ -289,7 +289,7 @@ void ht_delete(HT* table, char* key)
         else if (head != NULL)
         {
             // Collision Chain exists
-            if (strcmp(item->key, key) == 0) 
+            if (strcmp(item->key, key) == 0)
             {
                 // Remove this item and set the head of the list
                 // as the new item
@@ -299,7 +299,7 @@ void ht_delete(HT* table, char* key)
                 head = head->next;
                 list->next = NULL;
 
-                table->items[index] = create_item(list->node->key, list->node->value);
+                table->items[index] = create_item(list->ht_node->key, list->ht_node->value);
                 free_list(list);
                 table->overflow[index] = head;
                 return;
@@ -308,11 +308,11 @@ void ht_delete(HT* table, char* key)
             List* curr = head;
             List* prev = NULL;
 
-            while (curr)  
+            while (curr)
             {
-                if (strcmp(curr->node->key, key) == 0) 
+                if (strcmp(curr->ht_node->key, key) == 0)
                 {
-                    if (prev == NULL) 
+                    if (prev == NULL)
                     {
                         // First element of the chain. Remove the chain
                         free_list(head);
