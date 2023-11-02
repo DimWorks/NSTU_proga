@@ -10,6 +10,7 @@ typedef struct SET {
     int count;
 }SET;
 
+SET* create_set(int size);
 void set_insert(SET*, char*);
 void search_print(SET*, char*);
 void print_set(SET*);

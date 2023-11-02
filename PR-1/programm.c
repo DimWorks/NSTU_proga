@@ -9,6 +9,8 @@
 int main()
 {
 	char command[_SIZE_];
+	HT* table = create_table(_SIZE_);
+	SET* my_set = create_set(_SIZE_);
 
 	do {
 
@@ -23,7 +25,7 @@ int main()
 
 			printf("\nYour data: %s\n", data);
 
-
+			set_insert(my_set, data);
 		}
 		else if (strcmp(command, "SPUSH") == 0)
 		{
@@ -53,13 +55,25 @@ int main()
 			char data[100];
 			scanf("%s", data);
 
-			printf("\nYour data: %s\n", data);
+			printf("Enter the key: ");
+			char key[100];
+			scanf("%s", key);
+
+			printf("\nYour key: %s data: %s\n", key, data);
+
+			ht_insert(table, key, data);
 		}
 		//------------REMOVE------------
 
 		else if (strcmp(command, "SREM") == 0)
 		{
+			printf("Enter the data: ");
+			char data[100];
+			scanf("%s", data);
 
+			printf("\nYour key: %s\n", data);
+
+			set_delete(table, data);
 		}
 		else if (strcmp(command, "SPOP") == 0)
 		{
@@ -71,17 +85,29 @@ int main()
 		}
 		else if (strcmp(command, "HDEL") == 0)
 		{
+			printf("Enter the key: ");
+			char key[100];
+			scanf("%s", key);
 
+			printf("\nYour key: %s\n", key);
+
+			ht_delete(table, key);
 		}
 
 		//------------READ------------
 		else if (strcmp(command, "SISMEMBER") == 0)
 		{
-
+			printf("Why?\n");
 		}
 		else if (strcmp(command, "HGET") == 0)
 		{
+			printf("Enter the key: ");
+			char key[100];
+			scanf("%s", key);
 
+			printf("\nYour key: %s\n", key);
+
+			print_search(table, key);
 		}
 		else
 		{
