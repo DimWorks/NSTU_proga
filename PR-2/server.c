@@ -1,3 +1,8 @@
+#include "queue.h"
+#include "stack.h"
+#include "set.h"
+#include "hash_table.h"
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -10,12 +15,16 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#define first_line "Enter 1 number\n"
-#define second_line "Enter 2 number\n"
-#define third_line "Enter operation\n"
 
-// функция обслуживания подключившихся пользователей
-void dostuff(int, int);
+#define commad_line "Enter the command\n"
+#define data_line "Enter the data\n"
+#define key_line "Enter tne key\n"
+#define done_line "Done!\n"
+#define _SIZE_ 15
+
+// функция обработки запросов
+void dostuff (int sock, int shm);//, HT* table, SET* my_set);
+
 // функция обработки ошибок
 void error(const char *msg) {
     perror(msg);
@@ -24,7 +33,8 @@ void error(const char *msg) {
 // количество активных пользователей
 int nclients = 0;
 // печать количества активных пользователей
-void printusers() {
+void printusers() 
+{
     if (nclients) {
         printf("%d user on-line\n", nclients);
     }
@@ -33,7 +43,7 @@ void printusers() {
     }
 }
 // функция обработки данных
-int myfunc(int fn, int sn, char op) {
+/*int myfunc(int fn, int sn, char op) {
     switch(op) {
         case '+':
             return fn + sn;
@@ -46,7 +56,9 @@ int myfunc(int fn, int sn, char op) {
         default:
             return 0;
     }
-}
+}*/
+
+
 int main(int argc, char *argv[]) {
     char buff[1024]; // Буфер для различных нужд
     int sockfd, newsockfd; // дескрипторы сокетов
@@ -61,11 +73,11 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     
-    // Шаг 1 - создание сокета
+    // создание сокета
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) error("ERROR: opening socket");
     
-    // Шаг 2 - связывание сокета с локальным адресом
+    // связывание сокета с локальным адресом
     bzero((char*) &serv_addr, sizeof(serv_addr));
     portno = atoi(argv[1]);
     serv_addr.sin_family = AF_INET;
@@ -74,18 +86,21 @@ int main(int argc, char *argv[]) {
     if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
         error("ERROR: on binding");
     
-    // Шаг 3 - ожидание подключений, размер очереди - 5
+    // ожидание подключений, размер очереди - 5
     listen(sockfd, 5);
     clilen = sizeof(cli_addr);
     
-    // Шаг 3.5 - создание общей ячейки памяти для хранения количества активных пользователей
+    // создание общей ячейки памяти для хранения количества активных пользователей
     int shm = shm_open("/shm", O_CREAT | O_RDWR, 0660);
     if (shm == -1) error("Shared memory open");
     if (ftruncate(shm, sizeof(int)) == -1) error("Shared memory truncate");
     char* addr = mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, shm, 0);
     memcpy(addr, &nclients, sizeof(nclients));
 
-    // Шаг 4 - извлекаем сообщение из очереди (цикл извлечения запросов на подключение)
+    //HT* table = create_table(_SIZE_);
+    //SET* my_set = create_set(_SIZE_);
+
+    // извлекаем сообщение из очереди (цикл извлечения запросов на подключение)
     while (1) {
         newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
         if (newsockfd < 0) error("ERROR: on accept");
@@ -105,7 +120,7 @@ int main(int argc, char *argv[]) {
         if (pid < 0) error("ERROR: on fork");
         if (pid == 0) {
             close(sockfd);
-            dostuff(newsockfd, shm);
+            dostuff(newsockfd, shm);//, table, my_set);
             exit(EXIT_SUCCESS);
         }
         else close(newsockfd);
@@ -114,9 +129,12 @@ int main(int argc, char *argv[]) {
     exit(EXIT_SUCCESS);
 }
 
-void dostuff (int sock, int shm) {
+
+void dostuff (int sock, int shm)//, HT* table, SET* my_set) 
+{
     int bytes_recv; // размер принятого сообщения
-    int a,b; // переменные для myfunc
+    //int a,b; // переменные для myfunc
+    //char message[1024];
     char buff[20 * 1024];
     char startBuff[10]; // Буфер для различных нужд
     char* addr = mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, shm, 0);
@@ -128,17 +146,137 @@ void dostuff (int sock, int shm) {
         if (strcmp(startBuff, "start\n")) break;
 
         // отправляем клиенту сообщение
-        write(sock, first_line, sizeof(first_line));
+        write(sock, commad_line, sizeof(commad_line));
         
         // обработка первого параметра
         bytes_recv = read(sock, &buff[0], sizeof(buff));
-        if (bytes_recv < 0) error("ERROR reading from socket");
-        if (!strcmp(buff, "quit\n")) break;
         
-        a = atoi(buff); // преобразование первого параметра в int
+        if (bytes_recv < 0) error("ERROR reading from socket");
+        if (!strcmp(buff, "end\n")) break;
+
+        /*if (strcmp(buff, "SADD") == 0)
+        {
+            /*printf("Enter the data: ");
+            char data[100];
+            scanf("%s", data);
+
+            printf("\nYour data: %s\n", data);//
+
+            // отправляем клиенту сообщение
+            write(sock, data_line, sizeof(data_line));
+        
+            // обработка первого параметра
+            bytes_recv = read(sock, &buff[0], sizeof(buff));
+        
+            if (bytes_recv < 0) error("ERROR reading from socket");
+            //if (!strcmp(buff, "end\n")) break;
+
+            set_insert(my_set, buff, "");
+
+
+            write(sock, &buff[0], strlen(buff) + 1);
+        }*/
+        if (strcmp(buff, "SPUSH") == 0)
+        {
+            /*printf("Enter the data: ");
+            char data[100];
+            scanf("%s", data);
+
+            printf("\nYour data: %s\n", data);*/
+
+            // отправляем клиенту сообщение
+            write(sock, data_line, sizeof(data_line));
+        
+            // обработка первого параметра
+            bytes_recv = read(sock, &buff[0], sizeof(buff));
+        
+            if (bytes_recv < 0) error("ERROR reading from socket");
+            //if (!strcmp(buff, "end\n")) break;
+
+            push_stack(buff);
+
+        }
+        /*else if (strcmp(buff, "QPUSH") == 0)
+        {
+            printf("Enter the data: ");
+            char data[100];
+            scanf("%s", data);
+
+            printf("\nYour data: %s\n", data);
+
+            push_queue(data);
+
+        }
+        else if (strcmp(buff, "HSET") == 0)
+        {
+            printf("Enter the data: ");
+            char data[100];
+            scanf("%s", data);
+
+            printf("Enter the key: ");
+            char key[100];
+            scanf("%s", key);
+
+            printf("\nYour key: %s data: %s\n", key, data);
+
+            ht_insert(table, key, data);
+        }
+        //------------REMOVE------------
+
+        else if (strcmp(buff, "SREM") == 0)
+        {
+            printf("Enter the data: ");
+            char data[100];
+            scanf("%s", data);
+
+            printf("\nYour key: %s\n", data);
+
+            set_delete(table, data);
+        }
+        else if (strcmp(buff, "SPOP") == 0)
+        {
+            printf("%s\n", pop_stack());
+        }
+        else if (strcmp(buff, "QPOP") == 0)
+        {
+            printf("%s\n", pop_queue());
+        }
+        else if (strcmp(buff, "HDEL") == 0)
+        {
+            printf("Enter the key: ");
+            char key[100];
+            scanf("%s", key);
+
+            printf("\nYour key: %s\n", key);
+
+            ht_delete(table, key);
+        }
+
+        //------------READ------------
+        else if (strcmp(buff, "SISMEMBER") == 0)
+        {
+            printf("Why?\n");
+        }
+        else if (strcmp(buff, "HGET") == 0)
+        {
+            printf("Enter the key: ");
+            char key[100];
+            scanf("%s", key);
+
+            printf("\nYour key: %s\n", key);
+
+            print_search(table, key);
+        }*/
+        else
+        {
+            printf("ERROR: incorrect command\n");
+        }
+
+        
+        //a = atoi(buff); // преобразование первого параметра в int
 
         // отправляем клиенту сообщение
-        write(sock, second_line, sizeof(second_line));
+        /*write(sock, second_line, sizeof(second_line));
 
         // обработка второго параметра
         bytes_recv = read(sock, &buff[0], sizeof(buff));
@@ -161,7 +299,7 @@ void dostuff (int sock, int shm) {
 
         // отправляем клиенту результат
         //write(sock, &buff[0], sizeof(buff[0]));
-        write(sock, &buff[0], strlen(buff) + 1);
+        write(sock, &buff[0], strlen(buff) + 1);*/
     }
     memcpy(&nclients, addr, sizeof(nclients));
     nclients--; // уменьшаем счетчик активных клиентов

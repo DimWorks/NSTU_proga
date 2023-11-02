@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in serv_addr;
     struct hostent *server;
 
-    printf("Enter \"start\" and server send you instructions or \"quit\" to exit.\n");
+    printf("Enter \"start\" and server send you instructions or \"end\" to exit.\n");
     printf("Command \"start\" need each time, when server send answer.\n");
     if (argc < 3) {
         fprintf(stderr, "usage %s hostname port\n", argv[0]);
@@ -41,10 +41,10 @@ int main(int argc, char *argv[]) {
     server->h_length);
     // установка порта
     serv_addr.sin_port = htons(portno);
-    // Шаг 2 - установка соединения
+    // установка соединения
     if (connect(my_sock, (struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
         error("ERROR connecting");
-    // Шаг 3 - чтение и передача сообщений
+    // чтение и передача сообщений
     while (1) {
         char buff[1024];
         // читаем пользовательский ввод с клавиатуры
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
         fgets(&buff[0], sizeof(buff) - 1, stdin);
         // передаем строку клиента серверу
         send(my_sock, &buff[0], strlen(&buff[0]), 0);
-        if (!strcmp(&buff[0], "quit\n")) {
+        if (!strcmp(&buff[0], "end\n")) {
             // Корректный выход
             printf("Exit...\n");
             close(my_sock);
