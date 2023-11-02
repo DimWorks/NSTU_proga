@@ -50,6 +50,8 @@ int main(int argc, char *argv[]) {
         // читаем пользовательский ввод с клавиатуры
         printf("C: ");
         fgets(&buff[0], sizeof(buff) - 1, stdin);
+        
+        
         // передаем строку клиента серверу
         send(my_sock, &buff[0], strlen(&buff[0]), 0);
         if (!strcmp(&buff[0], "end\n")) {
