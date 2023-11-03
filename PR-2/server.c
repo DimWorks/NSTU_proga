@@ -18,8 +18,11 @@
 #define commad_line "Enter the command\n"
 #define data_line "Enter the data\n"
 #define key_line "Enter tne key\n"
-#define done_line "Done!\n"
+#define done_line "Done! Enter the command\n"
+#define msg_error "ERROR:_incorrect_command\n"
+
 #define _SIZE_ 15
+#define _BUFF_SIZE_ 20 * 1024
 
 // функция обработки запросов
 void dostuff (int sock, int shm);//, HT* table, SET* my_set);
@@ -90,8 +93,8 @@ int main(int argc, char *argv[]) {
     char* addr = mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, shm, 0);
     memcpy(addr, &nclients, sizeof(nclients));
 
-    //HT* table = create_table(_SIZE_);
-    //SET* my_set = create_set(_SIZE_);
+    HT* table = create_table(_SIZE_);
+    SET* my_set = create_set(_SIZE_);
 
     // извлекаем сообщение из очереди (цикл извлечения запросов на подключение)
     while (1) {
@@ -128,17 +131,21 @@ void dostuff (int sock, int shm)//, HT* table, SET* my_set)
     int bytes_recv; // размер принятого сообщения
     //int a,b; // переменные для myfunc
     //char message[1024];
-    char buff[20 * 1024];
-    char startBuff[10]; // Буфер для различных нужд
+    char buff[_BUFF_SIZE_];
+    //char startBuff[10]; // Буфер для различных нужд
     char* addr = mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, shm, 0);
 
-    while (1) {
-        // ожидаем готовности клиента
+    while (1) 
+    {
+
+         
+
+        /*// ожидаем готовности клиента
         bytes_recv = read(sock, &startBuff[0], sizeof(startBuff));
         if (bytes_recv < 0) error("ERROR reading from socket");
-        if (strcmp(startBuff, "start\n")) break;
+        if (strcmp(startBuff, "start\n")) break;*/
 
-        // отправляем клиенту сообщение
+       // отправляем клиенту сообщение
         write(sock, commad_line, sizeof(commad_line));
         
         // обработка первого параметра
@@ -229,7 +236,7 @@ void dostuff (int sock, int shm)//, HT* table, SET* my_set)
 
             set_delete(table, data);
         }*/
-        printf("%s", buff);
+        //printf("%s", buff);
         if (strcmp(buff, "SPOP\n") == 0)
         {
 
@@ -271,7 +278,7 @@ void dostuff (int sock, int shm)//, HT* table, SET* my_set)
         }*/
         else
         {
-            char* msg_error = "ERROR: incorrect command\n";
+            //char* msg_error = "ERROR:_incorrect_command\n";
             // отправляем клиенту сообщение
             write(sock, msg_error, sizeof(msg_error));
         }
@@ -304,6 +311,9 @@ void dostuff (int sock, int shm)//, HT* table, SET* my_set)
         // отправляем клиенту результат
         //write(sock, &buff[0], sizeof(buff[0]));
         write(sock, &buff[0], strlen(buff) + 1);*/
+
+        memset(buff, '\0', sizeof(buff));
+
     }
     memcpy(&nclients, addr, sizeof(nclients));
     nclients--; // уменьшаем счетчик активных клиентов

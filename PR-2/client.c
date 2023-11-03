@@ -48,6 +48,15 @@ int main(int argc, char *argv[]) {
     while (1) {
         char buff[1024];
         // читаем пользовательский ввод с клавиатуры
+        
+        // получаем сообщение от сервера
+        n = recv(my_sock, &buff[0], sizeof(buff) - 1, 0);
+        if (n == 0) break;
+        // ставим завершающий ноль в конце строки
+        //buff[n] = '\0';
+        // выводим на экран
+        printf("S: %s", buff);
+
         printf("C: ");
         fgets(&buff[0], sizeof(buff) - 1, stdin);
         
@@ -60,13 +69,6 @@ int main(int argc, char *argv[]) {
             close(my_sock);
             exit(EXIT_SUCCESS);
         }
-        // получаем сообщение от сервера
-        n = recv(my_sock, &buff[0], sizeof(buff) - 1, 0);
-        if (n == 0) break;
-        // ставим завершающий ноль в конце строки
-        //buff[n] = '\0';
-        // выводим на экран
-        printf("S: %s", buff);
     }
     printf("Recv error\n");
     close(my_sock);
