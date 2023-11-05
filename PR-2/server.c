@@ -20,12 +20,15 @@
 #define key_line "Enter tne key\n"
 #define done_line "Done! Enter the command\n"
 #define msg_error "ERROR:_incorrect_command\n"
+#define not_found "ERROR:_does_not_exsist Enter the command\n"
 
 #define _SIZE_ 15
 #define _BUFF_SIZE_ 20 * 1024
 
+#define CLEAR_BUFF memset(buff, '\0', sizeof(buff));
+
 // функция обработки запросов
-void dostuff (int sock, int shm);//, HT* table, SET* my_set);
+void dostuff (int sock, int shm, HT* table, SET* my_set);
 
 // функция обработки ошибок
 void error(const char *msg) {
@@ -116,7 +119,7 @@ int main(int argc, char *argv[]) {
         if (pid < 0) error("ERROR: on fork");
         if (pid == 0) {
             close(sockfd);
-            dostuff(newsockfd, shm);//, table, my_set);
+            dostuff(newsockfd, shm, table, my_set);
             exit(EXIT_SUCCESS);
         }
         else close(newsockfd);
@@ -126,7 +129,7 @@ int main(int argc, char *argv[]) {
 }
 
 
-void dostuff (int sock, int shm)//, HT* table, SET* my_set) 
+void dostuff (int sock, int shm, HT* table, SET* my_set) 
 {
     int bytes_recv; // размер принятого сообщения
     //int a,b; // переменные для myfunc
@@ -136,9 +139,7 @@ void dostuff (int sock, int shm)//, HT* table, SET* my_set)
     char* addr = mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, shm, 0);
 
     while (1) 
-    {
-
-         
+    {        
 
         /*// ожидаем готовности клиента
         bytes_recv = read(sock, &startBuff[0], sizeof(startBuff));
@@ -173,10 +174,21 @@ void dostuff (int sock, int shm)//, HT* table, SET* my_set)
 
             set_insert(my_set, buff, "");*/
 
+            // отправляем клиенту сообщение
+            write(sock, data_line, sizeof(data_line));
+        
+            // обработка первого параметра
+            bytes_recv = read(sock, &buff[0], sizeof(buff));
+        
+            if (bytes_recv < 0) error("ERROR reading from socket");
+            //if (!strcmp(buff, "end\n")) break;
 
-            write(sock, &buff[0], strlen(buff) + 1);
+            set_insert(my_set, buff, "");
+
+            // отправляем клиенту сообщение
+            write(sock, done_line, sizeof(done_line));
         }
-        if (strcmp(buff, "SPUSH\n") == 0)
+        else if (strcmp(buff, "SPUSH\n") == 0)
         {
             /*printf("Enter the data: ");
             char data[100];
@@ -199,20 +211,25 @@ void dostuff (int sock, int shm)//, HT* table, SET* my_set)
             write(sock, done_line, sizeof(done_line));
 
         }
-        /*else if (strcmp(buff, "QPUSH\n") == 0)
+        else if (strcmp(buff, "QPUSH\n") == 0)
         {
-            printf("Enter the data: ");
-            char data[100];
-            scanf("%s", data);
+            // отправляем клиенту сообщение
+            write(sock, data_line, sizeof(data_line));
+        
+            // обработка первого параметра
+            bytes_recv = read(sock, &buff[0], sizeof(buff));
+        
+            if (bytes_recv < 0) error("ERROR reading from socket");
+            //if (!strcmp(buff, "end\n")) break;
 
-            printf("\nYour data: %s\n", data);
+            push_queue(buff);
 
-            push_queue(data);
-
+            // отправляем клиенту сообщение
+            write(sock, done_line, sizeof(done_line));
         }
-        /*else if (strcmp(buff, "HSET\n") == 0)
+        else if (strcmp(buff, "HSET\n") == 0)
         {
-            printf("Enter the data: ");
+            /*printf("Enter the data: ");
             char data[100];
             scanf("%s", data);
 
@@ -220,24 +237,59 @@ void dostuff (int sock, int shm)//, HT* table, SET* my_set)
             char key[100];
             scanf("%s", key);
 
-            printf("\nYour key: %s data: %s\n", key, data);
+            printf("\nYour key: %s data: %s\n", key, data);*/
 
-            ht_insert(table, key, data);
+            // отправляем клиенту сообщение
+            write(sock, data_line, sizeof(data_line));
+        
+            // обработка первого параметра
+            bytes_recv = read(sock, &buff[0], sizeof(buff));
+        
+            if (bytes_recv < 0) error("ERROR reading from socket");
+            //if (!strcmp(buff, "end\n")) break;
+
+            char *data = strdup(buff);
+
+            memset(buff, '\0', sizeof(buff));
+
+            // отправляем клиенту сообщение
+            write(sock, key_line, sizeof(data_line));
+        
+            // обработка первого параметра
+            bytes_recv = read(sock, &buff[0], sizeof(buff));
+        
+            if (bytes_recv < 0) error("ERROR reading from socket");
+            //if (!strcmp(buff, "end\n")) break;            
+
+            ht_insert(table, buff, data);
+
+            // отправляем клиенту сообщение
+            write(sock, done_line, sizeof(done_line));
+
+            
         }
         //------------REMOVE------------
 
         else if (strcmp(buff, "SREM\n") == 0)
         {
-            printf("Enter the data: ");
+            /*printf("Enter the data: ");
             char data[100];
             scanf("%s", data);
 
-            printf("\nYour key: %s\n", data);
+            printf("\nYour key: %s\n", data);*/
 
-            set_delete(table, data);
-        }*/
-        //printf("%s", buff);
-        if (strcmp(buff, "SPOP\n") == 0)
+            // отправляем клиенту сообщение
+            write(sock, data_line, sizeof(data_line));
+        
+            // обработка первого параметра
+            bytes_recv = read(sock, &buff[0], sizeof(buff));
+        
+            if (bytes_recv < 0) error("ERROR reading from socket");
+            //if (!strcmp(buff, "end\n")) break;
+
+            set_delete(table, buff);
+        }
+        else if (strcmp(buff, "SPOP\n") == 0)
         {
 
             //printf("%s\n", pop_stack());
@@ -246,19 +298,32 @@ void dostuff (int sock, int shm)//, HT* table, SET* my_set)
             // отправляем клиенту сообщение
             write(sock, msg_res, sizeof(msg_res));
         }
-        /*else if (strcmp(buff, "QPOP\n") == 0)
+        else if (strcmp(buff, "QPOP\n") == 0)
         {
-            printf("%s\n", pop_queue());
+            //printf("%s\n", pop_queue());
+
+            char* msg_res = pop_queue();
+            // отправляем клиенту сообщение
+            write(sock, msg_res, sizeof(msg_res));
         }
         else if (strcmp(buff, "HDEL\n") == 0)
         {
-            printf("Enter the key: ");
+            /*printf("Enter the key: ");
             char key[100];
             scanf("%s", key);
 
-            printf("\nYour key: %s\n", key);
+            printf("\nYour key: %s\n", key);*/
 
-            ht_delete(table, key);
+            // отправляем клиенту сообщение
+            write(sock, key_line, sizeof(data_line));
+        
+            // обработка первого параметра
+            bytes_recv = read(sock, &buff[0], sizeof(buff));
+        
+            if (bytes_recv < 0) error("ERROR reading from socket");
+            //if (!strcmp(buff, "end\n")) break;
+
+            ht_delete(table, buff);
         }
 
         //------------READ------------
@@ -268,14 +333,40 @@ void dostuff (int sock, int shm)//, HT* table, SET* my_set)
         }
         else if (strcmp(buff, "HGET\n") == 0)
         {
-            printf("Enter the key: ");
+            /*printf("Enter the key: ");
             char key[100];
             scanf("%s", key);
 
-            printf("\nYour key: %s\n", key);
+            printf("\nYour key: %s\n", key);*/
 
-            print_search(table, key);
-        }*/
+            CLEAR_BUFF
+
+            // отправляем клиенту сообщение
+            write(sock, key_line, sizeof(data_line));
+        
+            // обработка первого параметра
+            bytes_recv = read(sock, &buff[0], sizeof(buff));
+        
+            if (bytes_recv < 0) error("ERROR reading from socket");
+            //if (!strcmp(buff, "end\n")) break;
+
+            printf("%s", buff);
+
+            char* res = ht_search(table, buff);
+
+            if (res == NULL)
+            {
+                //printf("Key:%s does not exist\n", key);
+
+                // отправляем клиенту сообщение
+                write(sock, not_found, sizeof(not_found));
+            }
+
+            // отправляем клиенту сообщение
+            write(sock, res, sizeof(res));
+
+            //print_search(table, buff);
+        }
         else
         {
             //char* msg_error = "ERROR:_incorrect_command\n";
@@ -312,7 +403,7 @@ void dostuff (int sock, int shm)//, HT* table, SET* my_set)
         //write(sock, &buff[0], sizeof(buff[0]));
         write(sock, &buff[0], strlen(buff) + 1);*/
 
-        memset(buff, '\0', sizeof(buff));
+        CLEAR_BUFF
 
     }
     memcpy(&nclients, addr, sizeof(nclients));

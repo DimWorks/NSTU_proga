@@ -20,6 +20,7 @@ typedef struct List {
 
 HT* create_table(int);
 void ht_insert(HT*, char* , char*);
+char* ht_search(HT* table, char* key);
 void print_search(HT*, char*);
 void print_table(HT*);
 void ht_delete(HT*, char*);
