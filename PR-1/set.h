@@ -11,7 +11,7 @@ typedef struct SET {
 }SET;
 
 SET* create_set(int size);
-void set_insert(SET*, char*);
+void set_insert(SET* table, char* key, char* value);
 void search_print(SET*, char*);
 void print_set(SET*);
 void set_delete(SET*, char*);

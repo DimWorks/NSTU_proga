@@ -3,6 +3,7 @@
 #include "set.h"
 #include "hash_table.h"
 #include <stdio.h>
+#include <string.h>
 
 #define _SIZE_ 15
 
@@ -25,7 +26,7 @@ int main()
 
 			printf("\nYour data: %s\n", data);
 
-			set_insert(my_set, data);
+			set_insert(my_set, data, "");
 		}
 		else if (strcmp(command, "SPUSH") == 0)
 		{

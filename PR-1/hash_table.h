@@ -2,7 +2,7 @@
 
 typedef struct ht_node {
     char* key;
-    void* value;
+    char* value;
 } ht_node;
 
 typedef struct HT {

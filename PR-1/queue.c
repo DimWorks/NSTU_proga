@@ -28,7 +28,7 @@ void push_to_start(q_node** list, char* data)
 {
     q_node* tmp = (q_node*)malloc(sizeof(q_node));
     //tmp->data = data;
-    tmp->data = _strdup(data);
+    tmp->data = strdup(data);
     tmp->next = *list;
     *list = tmp;
 }
@@ -42,7 +42,7 @@ void push_to_end(q_node* list_copy, char* data)
         return;
     }
     q_node* tmp = (q_node*)malloc(sizeof(q_node));
-    tmp->data = _strdup(data);
+    tmp->data = strdup(data);
     tmp->next = NULL;
     list_copy->next = tmp;
     END = tmp;
