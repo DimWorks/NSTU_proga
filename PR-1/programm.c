@@ -7,22 +7,28 @@
 
 #define _SIZE_ 15
 
-int main()
+int main(int argc, char* argv[])
 {
-	char command[_SIZE_];
+	//printf("What is IT? %d\n", argc);
+
+	char* command = strdup(argv[0]);
+	char* data = strdup(argv[1]);
+	char* key = strdup(argv[2]);
+
+	//printf("\nYour command: %s\n", command);
 	HT* table = create_table(_SIZE_);
 	SET* my_set = create_set(_SIZE_);
 
-	do {
+	//do {
 
-		printf("Enter it: ");
-		scanf("%s", &command);
+		//printf("Enter it: ");
+		//scanf("%s", &command);
 
 		if (strcmp(command, "SADD") == 0)
 		{
-			printf("Enter the data: ");
-			char data[100];
-			scanf("%s", data);
+			//printf("Enter the data: ");
+			//char data[100];
+			//scanf("%s", data);
 
 			printf("\nYour data: %s\n", data);
 
@@ -30,9 +36,9 @@ int main()
 		}
 		else if (strcmp(command, "SPUSH") == 0)
 		{
-			printf("Enter the data: ");
-			char data[100];
-			scanf("%s", data);
+			//printf("Enter the data: ");
+			//char data[100];
+			//scanf("%s", data);
 
 			printf("\nYour data: %s\n", data);
 
@@ -41,9 +47,9 @@ int main()
 		}
 		else if (strcmp(command, "QPUSH") == 0)
 		{
-			printf("Enter the data: ");
-			char data[100];
-			scanf("%s", data);
+			//printf("Enter the data: ");
+			//char data[100];
+			//scanf("%s", data);
 
 			printf("\nYour data: %s\n", data);
 
@@ -52,13 +58,13 @@ int main()
 		}
 		else if (strcmp(command, "HSET") == 0)
 		{
-			printf("Enter the data: ");
-			char data[100];
-			scanf("%s", data);
+			//printf("Enter the data: ");
+			//char data[100];
+			//scanf("%s", data);
 
-			printf("Enter the key: ");
-			char key[100];
-			scanf("%s", key);
+			//printf("Enter the key: ");
+			//char key[100];
+			//scanf("%s", key);
 
 			printf("\nYour key: %s data: %s\n", key, data);
 
@@ -68,9 +74,9 @@ int main()
 
 		else if (strcmp(command, "SREM") == 0)
 		{
-			printf("Enter the data: ");
-			char data[100];
-			scanf("%s", data);
+			//printf("Enter the data: ");
+			//char data[100];
+			//scanf("%s", data);
 
 			printf("\nYour key: %s\n", data);
 
@@ -86,9 +92,9 @@ int main()
 		}
 		else if (strcmp(command, "HDEL") == 0)
 		{
-			printf("Enter the key: ");
-			char key[100];
-			scanf("%s", key);
+			//printf("Enter the key: ");
+			//char key[100];
+			//scanf("%s", key);
 
 			printf("\nYour key: %s\n", key);
 
@@ -102,9 +108,9 @@ int main()
 		}
 		else if (strcmp(command, "HGET") == 0)
 		{
-			printf("Enter the key: ");
-			char key[100];
-			scanf("%s", key);
+			//printf("Enter the key: ");
+			//char key[100];
+			//scanf("%s", key);
 
 			printf("\nYour key: %s\n", key);
 
@@ -115,6 +121,6 @@ int main()
 			printf("ERROR: incorrect command\n");
 		}
 
-	} while (1);
+	//} while (1);
 
 }
