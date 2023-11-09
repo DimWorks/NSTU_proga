@@ -2,15 +2,42 @@
 #include "stack.h"
 #include "set.h"
 #include "hash_table.h"
+#include "file.c"
 #include <stdio.h>
 #include <string.h>
 
 #define _SIZE_ 15
+#define _PATH_ "data.txt"
+
+void writer(HT* table, SET* my_set)
+{
+	clear_file(_PATH_);
+
+	/*for(int i = 0; i < _SIZE_; i++)
+	{
+		//char* data = ;
+		//write_to_file(_PATH_, struc, data);
+	}*/
+
+	char* data = pop_queue();
+	while(strcmp(data, "List_is_empty.\n"))
+	{
+		write_to_file(_PATH_, "Queue", data);
+		data = pop_queue();
+	}
+
+	data = pop_stack();
+	while(strcmp(data, "List_is_empty.\n"))
+	{
+		write_to_file(_PATH_, "Stack", data);
+		data = pop_stack();
+	}	
+}
 
 int main(int argc, char* argv[])
 {
 	//printf("What is IT? %d\n", argc);
-
+	
 	char* command = strdup(argv[0]);
 	char* data = strdup(argv[1]);
 	char* key = strdup(argv[2]);
@@ -18,6 +45,11 @@ int main(int argc, char* argv[])
 	//printf("\nYour command: %s\n", command);
 	HT* table = create_table(_SIZE_);
 	SET* my_set = create_set(_SIZE_);
+
+	//reader(table, my_set);
+
+	read_file(_PATH_, "Queue");
+	read_file(_PATH_, "Stack");
 
 	//do {
 
@@ -122,5 +154,7 @@ int main(int argc, char* argv[])
 		}
 
 	//} while (1);
+
+		writer(table, my_set);
 
 }

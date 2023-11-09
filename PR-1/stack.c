@@ -19,8 +19,8 @@ char* pop_from_head(s_node** list)
 {
     if (*list == NULL)
     { 
-        printf("Element doesn't exist. List is empty.\n"); 
-        return NULL; 
+        //printf("List_is_empty.\n"); 
+        return "List_is_empty.\n"; 
     }
     s_node* tmp = *list;
     char* res = strdup(tmp->data);

@@ -53,8 +53,8 @@ char* pop_from_start(q_node** list)
 {
     if (*list == NULL)
     {
-        printf("Element doesn't exist. List is empty.\n");
-        return NULL;
+        //printf("Element doesn't exist. List is empty.\n");
+        return "List_is_empty.\n";
     }
     q_node* tmp = *list;
     char* res = tmp->data;
