@@ -24,3 +24,4 @@ void print_search(HT*, char*);
 void print_table(HT*);
 void ht_delete(HT*, char*);
 void free_table(HT*);
+void save_table(HT* table, char* path);

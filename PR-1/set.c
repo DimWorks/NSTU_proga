@@ -109,21 +109,35 @@ void set_insert(SET* table, char* key, char* value)
 
 char* set_search(SET* table, char* key)
 {
+    
+    printf("\t%s\n", key);
+
     int index = hash(key);
 
+    node* item = table->items[index];
+    if (item == NULL)
+    {
+        return NULL;
+    }
+    else if (!strcmp(item->key, key))
+    {
+        return item->key;
+    }
 
-    for (int i = 0; i < table->size; i++)
+    printf("\t%s, %s", item->key, key);
+
+    /*for (int i = 0; i < table->size; i++)
     {
         node* item = table->items[index];
         if (item == NULL)
         {
             return NULL;
         }
-        else if (strcmp(item->key, key) == 0)
+        else if (!strcmp(item->key, key))
         {
             return item->key;
         }
-    }
+    }*/
     return NULL;
 }
 
@@ -155,11 +169,22 @@ void print_set(SET* table)
     printf("-------------------\n\n");
 }
 
+void save_set(SET* my_set, char* path)
+{
+    for (int i = 0; i < my_set->size; i++)
+    {
+        if (my_set->items[i])
+        {
+            node* tmp = my_set->items[i];
+            write_to_file(path, "Set", tmp->key);
+        }
+    }
+}
+
 void set_delete(SET* table, char* key)
 {
     // Deletes an item from the table
     int index = hash(key);
-    //node* item = table->items[index];
 
     if (table->items[index] == NULL)
     {

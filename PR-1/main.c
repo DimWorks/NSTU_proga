@@ -99,7 +99,8 @@ int main()
 		//------------READ------------
 		else if (strcmp(command, "SISMEMBER") == 0)
 		{
-			printf("Why?\n");
+			printf("Enter the key: ");
+			scanf("%s", key);			
 		}
 		else if (strcmp(command, "HGET") == 0)
 		{

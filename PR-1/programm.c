@@ -32,6 +32,10 @@ void writer(HT* table, SET* my_set)
 		write_to_file(_PATH_, "Stack", data);
 		data = pop_stack();
 	}	
+	
+	save_set(my_set, _PATH_);
+	save_table(table, _PATH_);
+
 }
 
 int main(int argc, char* argv[])
@@ -50,28 +54,17 @@ int main(int argc, char* argv[])
 
 	read_file(_PATH_, "Queue");
 	read_file(_PATH_, "Stack");
-
-	//do {
-
-		//printf("Enter it: ");
-		//scanf("%s", &command);
+	read_set_file(_PATH_, my_set, "Set");
+	read_ht_file(_PATH_, table, "HT");
 
 		if (strcmp(command, "SADD") == 0)
 		{
-			//printf("Enter the data: ");
-			//char data[100];
-			//scanf("%s", data);
-
 			printf("\nYour data: %s\n", data);
 
 			set_insert(my_set, data, "");
 		}
 		else if (strcmp(command, "SPUSH") == 0)
 		{
-			//printf("Enter the data: ");
-			//char data[100];
-			//scanf("%s", data);
-
 			printf("\nYour data: %s\n", data);
 
 			push_stack(data);
@@ -79,10 +72,6 @@ int main(int argc, char* argv[])
 		}
 		else if (strcmp(command, "QPUSH") == 0)
 		{
-			//printf("Enter the data: ");
-			//char data[100];
-			//scanf("%s", data);
-
 			printf("\nYour data: %s\n", data);
 
 			push_queue(data);
@@ -90,14 +79,6 @@ int main(int argc, char* argv[])
 		}
 		else if (strcmp(command, "HSET") == 0)
 		{
-			//printf("Enter the data: ");
-			//char data[100];
-			//scanf("%s", data);
-
-			//printf("Enter the key: ");
-			//char key[100];
-			//scanf("%s", key);
-
 			printf("\nYour key: %s data: %s\n", key, data);
 
 			ht_insert(table, key, data);
@@ -106,13 +87,11 @@ int main(int argc, char* argv[])
 
 		else if (strcmp(command, "SREM") == 0)
 		{
-			//printf("Enter the data: ");
-			//char data[100];
-			//scanf("%s", data);
+			printf("\nYour key: %s\n", key);
 
-			printf("\nYour key: %s\n", data);
-
-			set_delete(table, data);
+			set_delete(table, key);
+			
+			key = strcat(key, "\n");
 		}
 		else if (strcmp(command, "SPOP") == 0)
 		{
@@ -124,10 +103,6 @@ int main(int argc, char* argv[])
 		}
 		else if (strcmp(command, "HDEL") == 0)
 		{
-			//printf("Enter the key: ");
-			//char key[100];
-			//scanf("%s", key);
-
 			printf("\nYour key: %s\n", key);
 
 			ht_delete(table, key);
@@ -136,14 +111,23 @@ int main(int argc, char* argv[])
 		//------------READ------------
 		else if (strcmp(command, "SISMEMBER") == 0)
 		{
-			printf("Why?\n");
+			//printf("Why?\n");
+			char* tmp;
+
+			key = strcat(key, "\n");
+
+			if((tmp = set_search(my_set, key)) == NULL)
+			{
+				printf("---NULL---\n");	
+			}
+			else
+			{
+				printf("Exist\n");
+			}
+			
 		}
 		else if (strcmp(command, "HGET") == 0)
 		{
-			//printf("Enter the key: ");
-			//char key[100];
-			//scanf("%s", key);
-
 			printf("\nYour key: %s\n", key);
 
 			print_search(table, key);
@@ -153,8 +137,5 @@ int main(int argc, char* argv[])
 			printf("ERROR: incorrect command\n");
 		}
 
-	//} while (1);
-
 		writer(table, my_set);
-
 }

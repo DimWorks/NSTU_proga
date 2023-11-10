@@ -43,33 +43,87 @@ void read_file(char* path, char* struc)
 
         if (tmp != NULL)
         {
-            if (!strcmp(struc, "HT"))
-            {
-                printf("%s", tmp);
-            }       
 
             if (!strcmp(struc, "Queue"))
             {
-                //printf("%s", tmp);
-                
-                push_queue(tmp);
-                
+                push_queue(tmp);                
             }
 
-            if (!strcmp(struc, "Stack"))
+            else if (!strcmp(struc, "Stack"))
             {
-                //printf("%s", tmp);
                 push_stack(tmp);
-            }
-
-            if (!strcmp(struc, "Set"))
-            {
-                printf("%s", tmp);
             }
         }
     }
 
     fclose(mf);
+}
+
+void read_ht_file(char* path, HT* table, char* struc)
+{
+    FILE* mf = fopen(path, "r");
+    
+
+    if (!mf)
+    {
+        printf("ERROR: The file does not exist\n");
+        return;
+    }
+
+    char mstr[100] = "Start";
+
+    char* estr = "Start";
+
+    while (estr != NULL)
+    {
+        estr = fgets(mstr, sizeof(mstr), mf);
+
+        char* tmp = decapitation(mstr, struc);
+
+        if (tmp != NULL)
+        {
+
+            if (!strcmp(struc, "HT"))
+            {
+                ht_insert(table, tmp, tmp);
+            }
+        }
+    }
+
+    fclose(mf);    
+}
+
+void read_set_file(char* path, SET* my_set, char* struc)
+{
+    FILE* mf = fopen(path, "r");
+    
+
+    if (!mf)
+    {
+        printf("ERROR: The file does not exist\n");
+        return;
+    }
+
+    char mstr[100] = "Start";
+
+    char* estr = "Start";
+
+    while (estr != NULL)
+    {
+        estr = fgets(mstr, sizeof(mstr), mf);
+
+        char* tmp = decapitation(mstr, struc);
+
+        if (tmp != NULL)
+        {
+            if (!strcmp(struc, "Set"))
+            {
+                set_insert(my_set, tmp, "");
+            }
+        }
+    }
+
+    fclose(mf);    
 }
 
 void write_to_file(char* path, char* struc, char* data)

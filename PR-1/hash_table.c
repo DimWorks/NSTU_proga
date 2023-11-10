@@ -1,4 +1,5 @@
 #include "hash_table.h"
+#include "file.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -261,6 +262,22 @@ void print_table(HT* table)
         }
     }
     printf("-------------------\n\n");
+}
+
+void save_table(HT* table, char* path)
+{
+    for (int i = 0; i < table->size; i++)
+    {
+        if (table->items[i])
+        {
+            ht_node* tmp = table->items[i];
+            //printf("Index:%d, Key:%s, Value:%s\n", i, tmp->key, tmp->value);
+            char* data = strdup(tmp->key);
+            data = strcat(data, ":");
+            data = strcat(data, tmp->value);
+            write_to_file(path, "HT", data);
+        }
+    }
 }
 
 void ht_delete(HT* table, char* key)
