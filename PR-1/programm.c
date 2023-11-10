@@ -13,12 +13,6 @@ void writer(HT* table, SET* my_set)
 {
 	clear_file(_PATH_);
 
-	/*for(int i = 0; i < _SIZE_; i++)
-	{
-		//char* data = ;
-		//write_to_file(_PATH_, struc, data);
-	}*/
-
 	char* data = pop_queue();
 	while(strcmp(data, "List_is_empty.\n"))
 	{
@@ -39,18 +33,13 @@ void writer(HT* table, SET* my_set)
 }
 
 int main(int argc, char* argv[])
-{
-	//printf("What is IT? %d\n", argc);
-	
+{	
 	char* command = strdup(argv[0]);
 	char* data = strdup(argv[1]);
 	char* key = strdup(argv[2]);
 
-	//printf("\nYour command: %s\n", command);
 	HT* table = create_table(_SIZE_);
 	SET* my_set = create_set(_SIZE_);
-
-	//reader(table, my_set);
 
 	read_file(_PATH_, "Queue");
 	read_file(_PATH_, "Stack");

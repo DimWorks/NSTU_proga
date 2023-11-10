@@ -18,6 +18,7 @@ typedef struct List {
     
 } List;
 
+HT* create_table(int);
 void ht_insert(HT*, char* , char*);
 void print_search(HT*, char*);
 void print_table(HT*);

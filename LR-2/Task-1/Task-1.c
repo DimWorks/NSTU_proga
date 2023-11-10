@@ -47,7 +47,7 @@ bool isRight(char* text)
 int main()
 {
     char* test1 = "(1te{st)}";    
-    char* test2 = "(te[s]t)";
+    char* test2 = ")(";
     printf("Test 2: %s - ", test2);
 
     if (isRight(test2))

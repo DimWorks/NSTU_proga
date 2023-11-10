@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "set.h"
 #include "hash_table.h"
 

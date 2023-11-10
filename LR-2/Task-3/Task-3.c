@@ -39,7 +39,7 @@ int main()
     //int arr[5] = { 4, -7, 5, -1, 8 };
 
     printf("\nInput: ");
-    for (int i = 0; i < size-1; i++)
+    for (int i = 0; i < size; i++)
     {
         printf("%d ", arr[i]);
     }
