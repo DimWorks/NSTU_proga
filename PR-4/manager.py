@@ -60,7 +60,6 @@ def generate_html_report(filename, column_order, html_file):
                 html += "</tr>"
 
         html += f'<tr><td>{count}</td><td>{ips.count(ip)}</td><td>{enumerate(unique_times)}</td></tr>'
-        print(count)
     
     html += "</table>"
     # Сохраняем HTML отчет в файл
