@@ -103,13 +103,13 @@ def redirect_to_original(short_link):
             return "Internal Server Error"
 
     # Открытие оригинальной ссылки
-    if original_link != "NOT_FOUND":
+    if original_link == "NOT_FOUND":
+        return render_template('!index.html')
+    else:
         json_creator = JSONCreator('statistic.json')
         json_creator.add_data(original_link + "(" + short_link+ ")", request.environ['REMOTE_ADDR'], datetime.datetime.now().replace(microsecond=0))
         json_creator.create_json()
-        return redirect(original_link)        
-    else:
-        return render_template('!index.html')
+        return redirect(original_link)
 
 
 if __name__ == '__main__':
