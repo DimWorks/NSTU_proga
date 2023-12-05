@@ -1,7 +1,8 @@
-/*#include <iostream>
+#include <iostream>
 #include <thread>
 #include <vector>
 #include <random>
+#include <chrono>
 
 // Функция, генерирующая случайный символ из ASCII таблицы
 char generateRandomChar() {
@@ -21,11 +22,16 @@ int main() {
     int numThreads = 5; // Заданное количество потоков
 
     std::vector<std::thread> threads;
-
+    auto startTime = std::chrono::high_resolution_clock::now();
     // Создание и запуск потоков
-    for (int i = 0; i < numThreads; ++i) {
+    for (int i = 0; i < numThreads; ++i) 
+    {
         threads.emplace_back(threadFunction);
     }
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
+    std::cout << "time: " << duration << " ms" << std::endl;
 
     // Ожидание завершения всех потоков
     for (auto& thread : threads) {
@@ -33,7 +39,7 @@ int main() {
     }
 
     return 0;
-}*/
+}
 
 
 /*
